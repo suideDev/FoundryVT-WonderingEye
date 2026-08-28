@@ -141,6 +141,29 @@ results.push({ label: "hidden from unlisted user", ok: eye.sprite.visible === fa
 eye = await run(makeHost({ users: ["u2"] }));
 results.push({ label: "shown to listed user", ok: eye.sprite.visible === true, got: `${eye.sprite.visible}`, want: "true" });
 
+// Tint parsing: whatever a colour field hands back should survive.
+const { readEye } = await import("../scripts/util.mjs");
+const tintCases = [
+  ["#00ff88", "#00ff88"],
+  ["#0F8", "#00ff88"],
+  ["00FF88", "#00ff88"],
+  ["#00ff8880", "#00ff88"],
+  [0x00ff88, "#00ff88"],
+  [{ css: "#00ff88" }, "#00ff88"],
+  ["rgb(0, 255, 136)", "#ff2d2d"],
+  [null, "#ff2d2d"]
+];
+
+for (const [input, expected] of tintCases) {
+  const got = readEye({ flags: { "wondering-eye": { eye: { tint: input } } } }).tint;
+  results.push({
+    label: `tint ${JSON.stringify(input)}`,
+    ok: got === expected,
+    got,
+    want: expected
+  });
+}
+
 let failed = 0;
 for (const r of results) {
   if (!r.ok) failed++;

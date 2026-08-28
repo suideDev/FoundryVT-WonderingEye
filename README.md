@@ -1,8 +1,8 @@
 # Wondering Eye
 
-A Foundry VTT module that attaches a gaze-tracking eye to any tile or token. The
-eye follows a chosen token around the scene, so a looming shadow can watch one
-particular character while everyone else sees a dark corner of the map.
+A Foundry VTT module that attaches a gaze-tracking eye to any tile or token. A
+pupil is drawn over the host artwork and continuously reorients toward a chosen
+token, so a piece of set dressing can appear to watch a character as it moves.
 
 Tracking runs entirely on each client, reading configuration from document
 flags. Nothing is written to the database while the eye is moving, so there is
@@ -23,9 +23,9 @@ reinstalling picks up the latest code without needing to cut releases. Bump
 
 ## Setting up an eye
 
-1. Place your artwork as a **Tile**. A giant shadow works better as a tile than
-   a token: it stays out of the turn order, cannot be targeted by accident, and
-   does not interact with vision.
+1. Place your artwork as a **Tile**. Large set-piece art works better as a tile
+   than a token: it stays out of the turn order, cannot be targeted by accident,
+   and does not interact with vision.
 2. Open the tile's configuration and switch to the **Eye** tab.
 3. Tick **Enable eye** and pick the token to watch under **Watch**.
 4. Click **Pick on canvas**, then click the spot on the map where the eye should
@@ -50,7 +50,7 @@ the end of the form instead.
 | --- | --- |
 | Watch | Token to follow. `Nearest player token` re-picks continuously. |
 | Pupil image | Optional artwork. Blank uses a built-in glowing slit pupil. |
-| Tint / Opacity | Colour and alpha applied to the pupil sprite. |
+| Tint / Opacity | Colour and alpha of the pupil. Any hex form is accepted. |
 | Additive glow | Blends the pupil additively. Best over dark artwork. |
 | Socket X / Y | Eye position as a fraction of host size, from its centre. |
 | Travel X / Y | Pupil travel radius as a fraction of host size. |
@@ -65,11 +65,22 @@ the end of the form instead.
 Socket, travel and size are all fractions rather than pixels so that one set of
 numbers keeps working across scenes with different grid sizes.
 
+### Colour
+
+The built-in pupil is drawn in white, so **Tint** multiplies against it cleanly
+and any hex colour works. Short hex, long hex and hex with an alpha suffix are
+all accepted.
+
+Be aware of how it interacts with **Additive glow**. Additive blending adds light
+to whatever is underneath, so dark tints become faint and black vanishes
+entirely. Leave it on for a bright pupil glowing out of dark artwork; turn it off
+if you want a dark or muted pupil, and the tint will blend normally instead.
+
 ### Only visible to
 
-This is the setting worth knowing about. Restrict the eye to a single player and
-only that person watches their patron watching them. Everyone else sees nothing,
-and the player gets to decide whether to say anything about it.
+Restrict the eye to specific players and only they will see it, while everyone
+else sees the unaltered artwork. Gamemasters always see it regardless. Useful
+when one character is meant to notice something the others do not.
 
 ## Macro API
 
@@ -114,9 +125,9 @@ visibility. Worth running after editing anything in `scripts/eye.mjs`.
 ## Known limitations
 
 The pupil is drawn just above the primary canvas group, which means it renders
-over token artwork rather than interleaving with it by elevation. For a
-background shadow this is invisible; if you put an eye on something that tokens
-walk in front of, they will not correctly occlude the pupil.
+over token artwork rather than interleaving with it by elevation. For background
+set dressing this is invisible; if you put an eye on something that tokens walk
+in front of, they will not correctly occlude the pupil.
 
 Compatibility is declared through v14 but has not been verified against every
 build. The module touches the canvas render loop, so if an eye stops appearing

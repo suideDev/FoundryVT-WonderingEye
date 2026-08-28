@@ -22,6 +22,30 @@ function num(value, fallback, min, max) {
   return n;
 }
 
+/**
+ * Accept whatever a colour field hands back: short or long hex, hex with an
+ * alpha suffix, a packed integer, or a Foundry Color. Anything unreadable falls
+ * through to the caller's default rather than silently rendering the wrong hue.
+ */
+function toHexColour(value, fallback) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return `#${Math.max(0, Math.min(0xffffff, Math.trunc(value))).toString(16).padStart(6, "0")}`;
+  }
+
+  let text = value;
+  if (text && typeof text === "object") text = text.css ?? String(text);
+  if (typeof text !== "string") return fallback;
+
+  text = text.trim().replace(/^#/, "");
+  if (/^[0-9a-f]{3}$/i.test(text)) {
+    return `#${text[0]}${text[0]}${text[1]}${text[1]}${text[2]}${text[2]}`.toLowerCase();
+  }
+  if (/^[0-9a-f]{6}$/i.test(text)) return `#${text.toLowerCase()}`;
+  if (/^[0-9a-f]{8}$/i.test(text)) return `#${text.slice(0, 6).toLowerCase()}`;
+
+  return fallback;
+}
+
 function toUserList(value) {
   if (Array.isArray(value)) return value.filter(u => typeof u === "string" && u.length);
   if (typeof value === "string" && value.length) {
@@ -51,7 +75,7 @@ export function readEye(doc) {
   cfg.target = typeof cfg.target === "string" ? cfg.target : "";
   cfg.targetActorId = typeof cfg.targetActorId === "string" ? cfg.targetActorId : "";
   cfg.pupilSrc = typeof cfg.pupilSrc === "string" ? cfg.pupilSrc.trim() : "";
-  cfg.tint = /^#[0-9a-f]{6}$/i.test(cfg.tint ?? "") ? cfg.tint : DEFAULTS.tint;
+  cfg.tint = toHexColour(cfg.tint, DEFAULTS.tint);
   cfg.alpha = num(cfg.alpha, DEFAULTS.alpha, 0, 1);
   cfg.socketX = num(cfg.socketX, DEFAULTS.socketX, -1, 1);
   cfg.socketY = num(cfg.socketY, DEFAULTS.socketY, -1, 1);
