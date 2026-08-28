@@ -1,0 +1,42 @@
+{
+  "wondering-eye.legend": "Wondering Eye",
+  "wondering-eye.field.enabled": "Enable eye",
+  "wondering-eye.field.target": "Watch",
+  "wondering-eye.field.pupilSrc": "Pupil image",
+  "wondering-eye.field.tint": "Tint",
+  "wondering-eye.field.alpha": "Opacity",
+  "wondering-eye.field.glow": "Additive glow",
+  "wondering-eye.field.socket": "Socket X / Y",
+  "wondering-eye.field.travel": "Travel X / Y",
+  "wondering-eye.field.pupilScale": "Pupil size",
+  "wondering-eye.field.gazeAmount": "Gaze strength",
+  "wondering-eye.field.smoothing": "Smoothing",
+  "wondering-eye.field.idleDrift": "Drift when idle",
+  "wondering-eye.field.blink": "Blink occasionally",
+  "wondering-eye.field.respectVisibility": "Only track visible tokens",
+  "wondering-eye.field.users": "Only visible to",
+
+  "wondering-eye.target.none": "Nothing (idle)",
+  "wondering-eye.target.nearest": "Nearest player token",
+
+  "wondering-eye.hint.target": "The eye follows this token as it moves. Stored by token and by actor, so it survives the token being replaced.",
+  "wondering-eye.hint.pupilSrc": "Leave blank for the built-in glowing slit pupil.",
+  "wondering-eye.hint.glow": "Blend the pupil additively. Looks best over dark artwork.",
+  "wondering-eye.hint.socket": "Where the eye sits, as a fraction of this object's size measured from its centre. Use Pick on canvas.",
+  "wondering-eye.hint.travel": "How far the pupil moves from the socket, as a fraction of size. Different X and Y give an almond-shaped eye.",
+  "wondering-eye.hint.pupilScale": "Pupil diameter as a fraction of this object's width.",
+  "wondering-eye.hint.gazeAmount": "0 keeps the pupil centred, 1 pushes it fully to the rim.",
+  "wondering-eye.hint.smoothing": "0 snaps instantly, 1 follows very lazily.",
+  "wondering-eye.hint.idleDrift": "Wander slowly when there is nothing to watch.",
+  "wondering-eye.hint.respectVisibility": "Stop tracking a target this client cannot see, so the gaze never reveals a hidden token.",
+  "wondering-eye.hint.users": "Leave empty to show everyone. Gamemasters always see the eye.",
+
+  "wondering-eye.button.pick": "Pick on canvas",
+
+  "wondering-eye.notify.noPlaceable": "This object is not on the current scene.",
+  "wondering-eye.notify.pickPrompt": "Click the spot on the canvas where the eye should sit.",
+  "wondering-eye.notify.pickDone": "Socket position captured. Save the sheet to apply it.",
+
+  "wondering-eye.settings.debug.name": "Debug logging",
+  "wondering-eye.settings.debug.hint": "Log eye setup and target resolution to the console."
+}

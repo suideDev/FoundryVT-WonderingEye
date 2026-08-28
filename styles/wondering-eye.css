@@ -1,0 +1,19 @@
+.wondering-eye-config {
+  margin-top: 0.5rem;
+}
+
+.wondering-eye-config .form-fields input[type="number"] {
+  min-width: 4rem;
+}
+
+.wondering-eye-config .wondering-eye-pick {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.wondering-eye-config .hint {
+  font-size: var(--font-size-12, 0.75rem);
+  opacity: 0.8;
+}

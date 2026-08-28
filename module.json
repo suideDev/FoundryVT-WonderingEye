@@ -1,0 +1,31 @@
+{
+  "id": "wondering-eye",
+  "title": "Wondering Eye",
+  "description": "Attach a gaze-tracking eye to any tile or token. The eye follows a chosen token around the scene, entirely client-side, with no document updates while it tracks.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "14"
+  },
+  "authors": [
+    {
+      "name": "stult"
+    }
+  ],
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/wondering-eye.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "url": "https://github.com/suideDev/FoundryVT-WonderingEye",
+  "manifest": "https://raw.githubusercontent.com/suideDev/FoundryVT-WonderingEye/main/module.json",
+  "download": "https://github.com/suideDev/FoundryVT-WonderingEye/archive/refs/heads/main.zip"
+}
