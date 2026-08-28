@@ -1,5 +1,5 @@
-.wondering-eye-config {
-  margin-top: 0.5rem;
+.wondering-eye-tab {
+  overflow-y: auto;
 }
 
 .wondering-eye-config .form-fields input[type="number"] {

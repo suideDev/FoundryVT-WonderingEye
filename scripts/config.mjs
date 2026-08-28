@@ -2,6 +2,8 @@ import { FLAG_KEY, MODULE_ID, TARGET_NEAREST } from "./constants.mjs";
 import { hostFrame, log, readEye, rotateVector, toRadians, warn } from "./util.mjs";
 
 const PREFIX = `flags.${MODULE_ID}.${FLAG_KEY}`;
+const TAB_ID = "wondering-eye";
+const TAB_GROUP = "sheet";
 
 function localize(key) {
   return game.i18n.localize(`${MODULE_ID}.${key}`);
@@ -21,6 +23,10 @@ function rootElement(html) {
   if (html?.element instanceof HTMLElement) return html.element;
   return null;
 }
+
+/* -------------------------------------------- */
+/*  Field builders                              */
+/* -------------------------------------------- */
 
 function checkbox(key, label, checked, hint) {
   return `
@@ -45,6 +51,19 @@ function number(key, label, value, step, hint) {
     </div>`;
 }
 
+function pair(keyX, keyY, label, valueX, valueY, step, hint, extra = "") {
+  return `
+    <div class="form-group">
+      <label>${esc(label)}</label>
+      <div class="form-fields">
+        <input type="number" step="${step}" data-dtype="Number" name="${PREFIX}.${keyX}" value="${esc(valueX)}">
+        <input type="number" step="${step}" data-dtype="Number" name="${PREFIX}.${keyY}" value="${esc(valueY)}">
+        ${extra}
+      </div>
+      ${hint ? `<p class="hint">${esc(hint)}</p>` : ""}
+    </div>`;
+}
+
 function targetOptions(scene, cfg) {
   const options = [
     `<option value="" ${cfg.target === "" ? "selected" : ""}>${esc(localize("target.none"))}</option>`,
@@ -63,8 +82,7 @@ function targetOptions(scene, cfg) {
 }
 
 function pupilField(cfg) {
-  const hasFilePicker = !!customElements.get("file-picker");
-  const field = hasFilePicker
+  const field = customElements.get("file-picker")
     ? `<file-picker name="${PREFIX}.pupilSrc" type="imagevideo" value="${esc(cfg.pupilSrc)}"></file-picker>`
     : `<input type="text" name="${PREFIX}.pupilSrc" value="${esc(cfg.pupilSrc)}">`;
 
@@ -77,8 +95,7 @@ function pupilField(cfg) {
 }
 
 function tintField(cfg) {
-  const hasColorPicker = !!customElements.get("color-picker");
-  const field = hasColorPicker
+  const field = customElements.get("color-picker")
     ? `<color-picker name="${PREFIX}.tint" value="${esc(cfg.tint)}"></color-picker>`
     : `<input type="color" name="${PREFIX}.tint" value="${esc(cfg.tint)}">`;
 
@@ -109,13 +126,13 @@ function usersField(cfg) {
     </div>`;
 }
 
-function buildSection(scene, cfg) {
+function buildFields(scene, cfg) {
+  const pickButton = `<button type="button" class="wondering-eye-pick">${esc(localize("button.pick"))}</button>`;
+
   return `
-    <fieldset class="wondering-eye-config">
-      <legend>${esc(localize("legend"))}</legend>
-
+    <fieldset>
+      <legend>${esc(localize("group.target"))}</legend>
       ${checkbox("enabled", localize("field.enabled"), cfg.enabled)}
-
       <div class="form-group">
         <label>${esc(localize("field.target"))}</label>
         <div class="form-fields">
@@ -124,56 +141,127 @@ function buildSection(scene, cfg) {
         <p class="hint">${esc(localize("hint.target"))}</p>
       </div>
       <input type="hidden" name="${PREFIX}.targetActorId" class="wondering-eye-actor" value="${esc(cfg.targetActorId)}">
+      ${checkbox("respectVisibility", localize("field.respectVisibility"), cfg.respectVisibility, localize("hint.respectVisibility"))}
+      ${usersField(cfg)}
+    </fieldset>
 
+    <fieldset>
+      <legend>${esc(localize("group.placement"))}</legend>
+      ${pair("socketX", "socketY", localize("field.socket"), cfg.socketX, cfg.socketY, "0.01", localize("hint.socket"), pickButton)}
+      ${pair("travelX", "travelY", localize("field.travel"), cfg.travelX, cfg.travelY, "0.01", localize("hint.travel"))}
+      ${number("gazeAmount", localize("field.gazeAmount"), cfg.gazeAmount, "0.05", localize("hint.gazeAmount"))}
+    </fieldset>
+
+    <fieldset>
+      <legend>${esc(localize("group.appearance"))}</legend>
       ${pupilField(cfg)}
       ${tintField(cfg)}
       ${number("alpha", localize("field.alpha"), cfg.alpha, "0.05")}
       ${checkbox("glow", localize("field.glow"), cfg.glow, localize("hint.glow"))}
-
-      <div class="form-group">
-        <label>${esc(localize("field.socket"))}</label>
-        <div class="form-fields">
-          <input type="number" step="0.01" data-dtype="Number" name="${PREFIX}.socketX" value="${esc(cfg.socketX)}">
-          <input type="number" step="0.01" data-dtype="Number" name="${PREFIX}.socketY" value="${esc(cfg.socketY)}">
-          <button type="button" class="wondering-eye-pick">${esc(localize("button.pick"))}</button>
-        </div>
-        <p class="hint">${esc(localize("hint.socket"))}</p>
-      </div>
-
-      <div class="form-group">
-        <label>${esc(localize("field.travel"))}</label>
-        <div class="form-fields">
-          <input type="number" step="0.01" min="0" data-dtype="Number" name="${PREFIX}.travelX" value="${esc(cfg.travelX)}">
-          <input type="number" step="0.01" min="0" data-dtype="Number" name="${PREFIX}.travelY" value="${esc(cfg.travelY)}">
-        </div>
-        <p class="hint">${esc(localize("hint.travel"))}</p>
-      </div>
-
       ${number("pupilScale", localize("field.pupilScale"), cfg.pupilScale, "0.005", localize("hint.pupilScale"))}
-      ${number("gazeAmount", localize("field.gazeAmount"), cfg.gazeAmount, "0.05", localize("hint.gazeAmount"))}
-      ${number("smoothing", localize("field.smoothing"), cfg.smoothing, "0.05", localize("hint.smoothing"))}
+    </fieldset>
 
+    <fieldset>
+      <legend>${esc(localize("group.motion"))}</legend>
+      ${number("smoothing", localize("field.smoothing"), cfg.smoothing, "0.05", localize("hint.smoothing"))}
       ${checkbox("idleDrift", localize("field.idleDrift"), cfg.idleDrift, localize("hint.idleDrift"))}
       ${checkbox("blink", localize("field.blink"), cfg.blink)}
-      ${checkbox("respectVisibility", localize("field.respectVisibility"), cfg.respectVisibility, localize("hint.respectVisibility"))}
-
-      ${usersField(cfg)}
     </fieldset>`;
 }
 
-/**
- * Anchor searched within the form itself, so injected fields can never end up
- * outside it and get dropped on submit.
- */
-function insertionAnchor(form) {
-  return form.querySelector("footer.form-footer")
-    ?? form.querySelector("footer.sheet-footer")
-    ?? form.querySelector("footer")
-    ?? form.querySelector("button[type='submit']")
-    ?? null;
+/* -------------------------------------------- */
+/*  Tab wiring                                  */
+/* -------------------------------------------- */
+
+function windowContent(root) {
+  return root.querySelector(".window-content") ?? root;
 }
 
-function pickSocket(doc, root) {
+function findNav(content) {
+  return content.querySelector(`nav.sheet-tabs, nav.tabs, nav[data-application-part="tabs"]`);
+}
+
+/**
+ * Tab content containers, identified by data attributes rather than class names
+ * so this keeps working if a sheet decorates them differently.
+ */
+function findTabPanels(content) {
+  return [...content.querySelectorAll(`[data-group="${TAB_GROUP}"][data-tab]`)]
+    .filter(el => el.tagName !== "A" && !el.closest("nav"));
+}
+
+function setActiveTab(content, tabId) {
+  for (const item of content.querySelectorAll(`nav [data-group="${TAB_GROUP}"][data-tab]`)) {
+    item.classList.toggle("active", item.dataset.tab === tabId);
+  }
+  for (const panel of findTabPanels(content)) {
+    panel.classList.toggle("active", panel.dataset.tab === tabId);
+  }
+}
+
+/** Clone an existing nav entry so we inherit whatever markup the sheet uses. */
+function buildNavItem(nav) {
+  const template = nav.querySelector("a[data-tab]");
+  let item;
+
+  if (template) {
+    item = template.cloneNode(true);
+    item.classList.remove("active");
+    // Core's action handler does not know this tab id, so we drive it ourselves.
+    item.removeAttribute("data-action");
+    const icon = item.querySelector("i");
+    if (icon) icon.className = "fa-solid fa-eye";
+    const span = item.querySelector("span");
+    if (span) span.textContent = localize("tab.label");
+    else item.textContent = localize("tab.label");
+  } else {
+    item = document.createElement("a");
+    item.innerHTML = `<i class="fa-solid fa-eye" inert=""></i><span>${esc(localize("tab.label"))}</span>`;
+  }
+
+  item.dataset.tab = TAB_ID;
+  item.dataset.group = TAB_GROUP;
+  item.classList.add("wondering-eye-nav");
+  return item;
+}
+
+/** Shallow clone of a sibling panel keeps its classes and flex behaviour. */
+function buildPanel(panels, innerHTML) {
+  const template = panels[0];
+  let panel;
+
+  if (template) {
+    panel = template.cloneNode(false);
+    panel.classList.remove("active");
+    // Detach from the sheet's part system so partial re-renders ignore it.
+    panel.removeAttribute("data-application-part");
+  } else {
+    panel = document.createElement("section");
+    panel.classList.add("tab");
+  }
+
+  panel.dataset.tab = TAB_ID;
+  panel.dataset.group = TAB_GROUP;
+  panel.classList.add("wondering-eye-tab", "wondering-eye-config");
+  panel.innerHTML = innerHTML;
+  return panel;
+}
+
+function activateFields(app, scope) {
+  const select = scope.querySelector(".wondering-eye-target");
+  const actorInput = scope.querySelector(".wondering-eye-actor");
+
+  select?.addEventListener("change", () => {
+    if (!actorInput) return;
+    actorInput.value = select.selectedOptions?.[0]?.dataset?.actorId ?? "";
+  });
+
+  scope.querySelector(".wondering-eye-pick")?.addEventListener("click", () => {
+    pickSocket(app.document, scope);
+  });
+}
+
+function pickSocket(doc, scope) {
   const host = doc?.object;
   if (!host) {
     ui.notifications.warn(localize("notify.noPlaceable"));
@@ -205,8 +293,8 @@ function pickSocket(doc, root) {
       -toRadians(frame.rotation)
     );
 
-    const socketX = root.querySelector(`[name="${PREFIX}.socketX"]`);
-    const socketY = root.querySelector(`[name="${PREFIX}.socketY"]`);
+    const socketX = scope.querySelector(`[name="${PREFIX}.socketX"]`);
+    const socketY = scope.querySelector(`[name="${PREFIX}.socketY"]`);
     if (socketX) socketX.value = (local.x / frame.w).toFixed(4);
     if (socketY) socketY.value = (local.y / frame.h).toFixed(4);
 
@@ -214,19 +302,23 @@ function pickSocket(doc, root) {
   }, { capture: true, once: true });
 }
 
-function activate(app, root) {
-  const select = root.querySelector(".wondering-eye-target");
-  const actorInput = root.querySelector(".wondering-eye-actor");
+/**
+ * Sheets without a tab bar get the fields appended instead. Only reachable on
+ * older single-page sheets, where there is no flex layout to disturb.
+ */
+function appendWithoutTabs(content, fields) {
+  const form = content.closest("form") ?? content;
+  const anchor = content.querySelector("footer.form-footer, footer.sheet-footer, footer")
+    ?? content.querySelector("button[type='submit']");
 
-  select?.addEventListener("change", () => {
-    if (!actorInput) return;
-    const option = select.selectedOptions?.[0];
-    actorInput.value = option?.dataset?.actorId ?? "";
-  });
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("wondering-eye-config");
+  wrapper.innerHTML = `<fieldset><legend>${esc(localize("legend"))}</legend>${fields}</fieldset>`;
 
-  root.querySelector(".wondering-eye-pick")?.addEventListener("click", () => {
-    pickSocket(app.document, root);
-  });
+  if (anchor?.parentElement) anchor.parentElement.insertBefore(wrapper, anchor);
+  else (form ?? content).append(wrapper);
+
+  return wrapper;
 }
 
 function onRenderConfig(app, html) {
@@ -239,22 +331,35 @@ function onRenderConfig(app, html) {
     const root = rootElement(html);
     if (!root || root.querySelector(".wondering-eye-config")) return;
 
-    const form = root.tagName === "FORM" ? root : root.querySelector("form");
-    if (!form) return;
+    const content = windowContent(root);
+    const fields = buildFields(doc.parent, readEye(doc));
+    const nav = findNav(content);
+    const panels = findTabPanels(content);
 
-    const section = buildSection(doc.parent, readEye(doc));
-    const anchor = insertionAnchor(form);
-
-    if (anchor) anchor.insertAdjacentHTML("beforebegin", section);
-    else form.insertAdjacentHTML("beforeend", section);
-
-    activate(app, form);
-
-    try {
-      app.setPosition({ height: "auto" });
-    } catch (err) {
-      log("setPosition unsupported", err);
+    if (!nav || !panels.length) {
+      const wrapper = appendWithoutTabs(content, fields);
+      activateFields(app, wrapper);
+      return;
     }
+
+    const panel = buildPanel(panels, fields);
+    panels.at(-1).after(panel);
+
+    const item = buildNavItem(nav);
+    nav.append(item);
+
+    item.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      setActiveTab(content, TAB_ID);
+      if (app.tabGroups) app.tabGroups[TAB_GROUP] = TAB_ID;
+    });
+
+    // Survive a re-render that happened while our tab was the active one.
+    if (app.tabGroups?.[TAB_GROUP] === TAB_ID) setActiveTab(content, TAB_ID);
+
+    activateFields(app, panel);
+    log(`injected configuration tab into ${app.constructor.name}`);
   } catch (err) {
     warn("Failed to inject configuration UI", err);
   }

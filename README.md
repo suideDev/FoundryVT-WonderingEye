@@ -26,7 +26,7 @@ reinstalling picks up the latest code without needing to cut releases. Bump
 1. Place your artwork as a **Tile**. A giant shadow works better as a tile than
    a token: it stays out of the turn order, cannot be targeted by accident, and
    does not interact with vision.
-2. Open the tile's configuration and scroll to the **Wondering Eye** section.
+2. Open the tile's configuration and switch to the **Eye** tab.
 3. Tick **Enable eye** and pick the token to watch under **Watch**.
 4. Click **Pick on canvas**, then click the spot on the map where the eye should
    sit. This fills in Socket X and Y for you.
@@ -35,9 +35,14 @@ reinstalling picks up the latest code without needing to cut releases. Bump
    if you resize the tile later.
 6. Save. The eye starts tracking immediately on every connected client.
 
-Tokens work as hosts too, with the same section in the token configuration
-sheet. Prototype tokens are skipped, since there is no scene to pick a target
-from.
+Tokens work as hosts too, with the same tab in the token configuration sheet.
+Prototype tokens are skipped, since there is no scene to pick a target from.
+
+The tab is built by cloning the sheet's own navigation entry and tab panel, so
+it inherits the correct markup instead of assuming a fixed structure. That also
+means it coexists with modules that replace the tile sheet, such as Monk's
+Active Tile Triggers. Sheets with no tab bar at all get the fields appended to
+the end of the form instead.
 
 ## Settings reference
 

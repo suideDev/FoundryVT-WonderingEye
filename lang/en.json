@@ -1,5 +1,10 @@
 {
   "wondering-eye.legend": "Wondering Eye",
+  "wondering-eye.tab.label": "Eye",
+  "wondering-eye.group.target": "Target",
+  "wondering-eye.group.placement": "Placement",
+  "wondering-eye.group.appearance": "Appearance",
+  "wondering-eye.group.motion": "Motion",
   "wondering-eye.field.enabled": "Enable eye",
   "wondering-eye.field.target": "Watch",
   "wondering-eye.field.pupilSrc": "Pupil image",
