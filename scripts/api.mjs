@@ -1,4 +1,4 @@
-import { DEFAULTS, FLAG_KEY, MODULE_ID, TARGET_NEAREST } from "./constants.mjs";
+import { DEFAULTS, FLAG_KEY, MODULE_ID, PUPIL_STYLES, TARGET_NEAREST } from "./constants.mjs";
 import { GazeManager } from "./manager.mjs";
 import { readEye } from "./util.mjs";
 
@@ -21,6 +21,7 @@ function asToken(target) {
 
 export const WonderingEyeAPI = {
   TARGET_NEAREST,
+  PUPIL_STYLES,
   DEFAULTS,
 
   /** Read the resolved configuration for a host tile or token. */

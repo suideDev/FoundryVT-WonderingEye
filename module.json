@@ -2,7 +2,7 @@
   "id": "wondering-eye",
   "title": "Wondering Eye",
   "description": "Attach a gaze-tracking eye to any tile or token. The eye follows a chosen token around the scene, entirely client-side, with no document updates while it tracks.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "compatibility": {
     "minimum": "12",
     "verified": "14"

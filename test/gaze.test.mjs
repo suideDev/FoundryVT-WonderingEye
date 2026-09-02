@@ -164,6 +164,32 @@ for (const [input, expected] of tintCases) {
   });
 }
 
+const { DEFAULTS, PUPIL_STYLES } = await import("../scripts/constants.mjs");
+results.push({
+  label: "default pupil style is slit",
+  ok: DEFAULTS.pupilStyle === "slit" && PUPIL_STYLES[0] === "slit",
+  got: `${DEFAULTS.pupilStyle} / ${PUPIL_STYLES[0]}`,
+  want: "slit / slit"
+});
+
+const styleCases = [
+  ["slit", "slit"],
+  ["round", "round"],
+  ["orb", "orb"],
+  ["nope", "slit"],
+  ["", "slit"],
+  [null, "slit"]
+];
+for (const [input, expected] of styleCases) {
+  const got = readEye({ flags: { "wondering-eye": { eye: { pupilStyle: input } } } }).pupilStyle;
+  results.push({
+    label: `pupilStyle ${JSON.stringify(input)}`,
+    ok: got === expected,
+    got,
+    want: expected
+  });
+}
+
 let failed = 0;
 for (const r of results) {
   if (!r.ok) failed++;

@@ -1,4 +1,5 @@
-import { FLAG_KEY, MODULE_ID, TARGET_NEAREST } from "./constants.mjs";
+import { FLAG_KEY, MODULE_ID, PUPIL_STYLES, TARGET_NEAREST } from "./constants.mjs";
+import { drawPupil } from "./texture.mjs";
 import { hostFrame, log, readEye, rotateVector, toRadians, warn } from "./util.mjs";
 
 const PREFIX = `flags.${MODULE_ID}.${FLAG_KEY}`;
@@ -81,6 +82,23 @@ function targetOptions(scene, cfg) {
   return options.join("");
 }
 
+function styleField(cfg) {
+  const options = PUPIL_STYLES.map(id => {
+    const selected = cfg.pupilStyle === id ? "selected" : "";
+    return `<option value="${esc(id)}" ${selected}>${esc(localize(`style.${id}`))}</option>`;
+  }).join("");
+
+  return `
+    <div class="form-group">
+      <label>${esc(localize("field.pupilStyle"))}</label>
+      <div class="form-fields">
+        <select name="${PREFIX}.pupilStyle" class="wondering-eye-style">${options}</select>
+        <canvas class="wondering-eye-style-preview" width="48" height="48"></canvas>
+      </div>
+      <p class="hint">${esc(localize("hint.pupilStyle"))}</p>
+    </div>`;
+}
+
 function pupilField(cfg) {
   const field = customElements.get("file-picker")
     ? `<file-picker name="${PREFIX}.pupilSrc" type="imagevideo" value="${esc(cfg.pupilSrc)}"></file-picker>`
@@ -154,6 +172,7 @@ function buildFields(scene, cfg) {
 
     <fieldset>
       <legend>${esc(localize("group.appearance"))}</legend>
+      ${styleField(cfg)}
       ${pupilField(cfg)}
       ${tintField(cfg)}
       ${number("alpha", localize("field.alpha"), cfg.alpha, "0.05")}
@@ -247,6 +266,18 @@ function buildPanel(panels, innerHTML) {
   return panel;
 }
 
+function paintStylePreview(canvas, style) {
+  if (!canvas) return;
+  try {
+    const src = drawPupil(style);
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(src, 0, 0, canvas.width, canvas.height);
+  } catch (err) {
+    warn("Failed to paint pupil preview", err);
+  }
+}
+
 function activateFields(app, scope) {
   const select = scope.querySelector(".wondering-eye-target");
   const actorInput = scope.querySelector(".wondering-eye-actor");
@@ -259,6 +290,12 @@ function activateFields(app, scope) {
   scope.querySelector(".wondering-eye-pick")?.addEventListener("click", () => {
     pickSocket(app.document, scope);
   });
+
+  const styleSelect = scope.querySelector(".wondering-eye-style");
+  const preview = scope.querySelector(".wondering-eye-style-preview");
+  const paint = () => paintStylePreview(preview, styleSelect?.value);
+  styleSelect?.addEventListener("change", paint);
+  paint();
 }
 
 function pickSocket(doc, scope) {

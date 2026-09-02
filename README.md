@@ -30,9 +30,10 @@ reinstalling picks up the latest code without needing to cut releases. Bump
 3. Tick **Enable eye** and pick the token to watch under **Watch**.
 4. Click **Pick on canvas**, then click the spot on the map where the eye should
    sit. This fills in Socket X and Y for you.
-5. Set **Travel X / Y** to control how far the pupil moves, and **Pupil size**
-   for its diameter. Both are fractions of the tile's size, so they stay correct
-   if you resize the tile later.
+5. Choose a **Pupil** style, or supply your own **Pupil image**. Set **Travel X / Y**
+   to control how far the pupil moves, and **Pupil size** for its diameter. Both
+   are fractions of the tile's size, so they stay correct if you resize the tile
+   later.
 6. Save. The eye starts tracking immediately on every connected client.
 
 Tokens work as hosts too, with the same tab in the token configuration sheet.
@@ -49,7 +50,8 @@ the end of the form instead.
 | Field | What it does |
 | --- | --- |
 | Watch | Token to follow. `Nearest player token` re-picks continuously. |
-| Pupil image | Optional artwork. Blank uses a built-in glowing slit pupil. |
+| Pupil | Built-in shape. Ignored if a pupil image is set. |
+| Pupil image | Optional artwork. Blank uses the built-in style chosen above. |
 | Tint / Opacity | Colour and alpha of the pupil. Any hex form is accepted. |
 | Additive glow | Blends the pupil additively. Best over dark artwork. |
 | Socket X / Y | Eye position as a fraction of host size, from its centre. |
@@ -67,9 +69,14 @@ numbers keeps working across scenes with different grid sizes.
 
 ### Colour
 
-The built-in pupil is drawn in white, so **Tint** multiplies against it cleanly
-and any hex colour works. Short hex, long hex and hex with an alpha suffix are
-all accepted.
+The built-in pupils are drawn in white, so **Tint** multiplies against them
+cleanly and any hex colour works. Short hex, long hex and hex with an alpha
+suffix are all accepted.
+
+The default **Slit** style is the original glowing vertical pupil. Round,
+horizontal, diamond, star, crescent, cross and triangle punch a different hole
+in the same glow. Ring is a hollow band of light, and orb is the glow with no
+hole.
 
 Be aware of how it interacts with **Additive glow**. Additive blending adds light
 to whatever is underneath, so dark tints become faint and black vanishes
@@ -101,6 +108,7 @@ await WonderingEye.set(tile, {
   travelX: 0.03,
   travelY: 0.015,
   pupilScale: 0.05,
+  pupilStyle: "slit",
   tint: "#ff2d2d",
   smoothing: 0.35,
   users: [game.users.getName("Player Name")?.id]

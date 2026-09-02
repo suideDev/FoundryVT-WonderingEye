@@ -3,10 +3,24 @@ export const FLAG_KEY = "eye";
 
 export const TARGET_NEAREST = "@nearest";
 
+export const PUPIL_STYLES = [
+  "slit",
+  "round",
+  "horizontal",
+  "diamond",
+  "star",
+  "crescent",
+  "cross",
+  "triangle",
+  "ring",
+  "orb"
+];
+
 export const DEFAULTS = {
   enabled: false,
   target: "",
   targetActorId: "",
+  pupilStyle: "slit",
   pupilSrc: "",
   tint: "#ff2d2d",
   alpha: 1,

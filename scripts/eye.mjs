@@ -1,5 +1,5 @@
 import { TARGET_NEAREST } from "./constants.mjs";
-import { defaultPupilTexture } from "./texture.mjs";
+import { pupilTexture } from "./texture.mjs";
 import {
   centerOf,
   hexToInt,
@@ -35,7 +35,7 @@ export class Eye {
   }
 
   async prepare() {
-    const texture = (await resolveTexture(this.cfg.pupilSrc)) ?? defaultPupilTexture();
+    const texture = (await resolveTexture(this.cfg.pupilSrc)) ?? pupilTexture(this.cfg.pupilStyle);
     if (this.destroyed || !this.container || this.container.destroyed) return;
 
     const sprite = new PIXI.Sprite(texture);

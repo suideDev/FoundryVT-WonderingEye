@@ -1,4 +1,4 @@
-import { MODULE_ID, FLAG_KEY, DEFAULTS } from "./constants.mjs";
+import { MODULE_ID, FLAG_KEY, DEFAULTS, PUPIL_STYLES } from "./constants.mjs";
 
 let debugEnabled = false;
 
@@ -74,6 +74,7 @@ export function readEye(doc) {
   cfg.respectVisibility = !!cfg.respectVisibility;
   cfg.target = typeof cfg.target === "string" ? cfg.target : "";
   cfg.targetActorId = typeof cfg.targetActorId === "string" ? cfg.targetActorId : "";
+  cfg.pupilStyle = PUPIL_STYLES.includes(cfg.pupilStyle) ? cfg.pupilStyle : DEFAULTS.pupilStyle;
   cfg.pupilSrc = typeof cfg.pupilSrc === "string" ? cfg.pupilSrc.trim() : "";
   cfg.tint = toHexColour(cfg.tint, DEFAULTS.tint);
   cfg.alpha = num(cfg.alpha, DEFAULTS.alpha, 0, 1);

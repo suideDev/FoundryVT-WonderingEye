@@ -13,6 +13,15 @@
   white-space: nowrap;
 }
 
+.wondering-eye-config .wondering-eye-style-preview {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #0b0b0c;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
 .wondering-eye-config .hint {
   font-size: var(--font-size-12, 0.75rem);
   opacity: 0.8;
