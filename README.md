@@ -14,12 +14,11 @@ In The Forge, open your game's **Add-on Modules** tab, choose **Install Module**
 and paste:
 
 ```
-https://raw.githubusercontent.com/suideDev/FoundryVT-WonderingEye/main/module.json
+https://github.com/suideDev/FoundryVT-WonderingEye/releases/latest/download/module.json
 ```
 
-The `download` URL points at the `main` branch archive, so pushing a commit and
-reinstalling picks up the latest code without needing to cut releases. Bump
-`version` in `module.json` when you want Foundry to offer an update.
+Updates come from GitHub Releases. Tag `vX.Y.Z` to publish a new version; Foundry
+then compares that release's `module.json` against the copy you already have.
 
 ## Setting up an eye
 
